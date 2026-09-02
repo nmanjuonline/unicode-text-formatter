@@ -60,9 +60,10 @@ $(function () {
   function wrapSelectionInBold() {
     const input = $('#inputText')[0];
     const start = input.selectionStart, end = input.selectionEnd;
-    if (start === end) return;
+    const delimiter = $('#delimiter').val();
+    if (start === end || !delimiter) return;
     const selected = input.value.slice(start, end);
-    input.setRangeText('**' + selected + '**', start, end, 'select');
+    input.setRangeText(delimiter + selected + delimiter, start, end, 'select');
     input.focus();
     formatText();
   }
