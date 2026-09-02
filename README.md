@@ -63,11 +63,11 @@ Every odd delimiter-pair section is converted. Text outside delimiters remains u
 
 ### Desktop shortcut
 
-Select text in the input field, then press `Ctrl+B`. The app wraps the selection in `**` markers and refreshes the output.
+Select text in the input field, then press `Ctrl+B`. The app wraps the selection with the delimiter currently entered in the **Delimiter** field, then refreshes the output. For example, it adds `**` when the delimiter is `**`, or `[[` and `[[` when the delimiter is `[[`.
 
 ### Mobile control
 
-On narrow/mobile screens, select text in the input field and tap **B Bold selection**. It performs the same action as the desktop shortcut. The button is intentionally hidden on desktop, where `Ctrl+B` is available.
+On narrow/mobile screens, select text in the input field and tap **B Bold selection**. It wraps the selected text with the current delimiter, just like the desktop shortcut. The button is intentionally hidden on desktop, where `Ctrl+B` is available.
 
 ## Available styles
 
