@@ -19,10 +19,13 @@ code { padding:2px 5px; color:#4b43d3; background:#eeedff; border-radius:4px; fo
 .panel-heading { display:flex; align-items:center; justify-content:space-between; min-height:55px; padding:0 17px; border-bottom:1px solid var(--line); }
 .panel-heading label { display:block; font-size:.82rem; }
 .panel-heading span { color:#8b95a7; font-size:.72rem; font-weight:600; }
+.input-actions { display:flex; align-items:center; gap:10px; }
+#boldButton { display:none; min-height:29px; padding:4px 8px; border:1px solid #d9d7ff; border-radius:7px; color:#4b43d3; background:#f4f3ff; font:700 .72rem Manrope, Arial, sans-serif; cursor:pointer; }
+#boldButton:hover { background:#eae9ff; }
 .panel textarea { display:block; border:0; border-radius:0; box-shadow:none; }
 .output-panel { border-color:#cbc8ff; }
 #copyButton { border:0; border-radius:8px; padding:7px 12px; color:#fff; background:var(--accent); font:800 .76rem Manrope, Arial, sans-serif; cursor:pointer; transition:background .16s, transform .16s; }
 #copyButton:hover { background:var(--accent-dark); } #copyButton:active { transform:translateY(1px); }
 #toast { position:fixed; z-index:5; bottom:24px; left:50%; padding:11px 17px; border-radius:9px; color:white; background:#17223a; box-shadow:0 8px 25px rgba(0,0,0,.18); font-size:.85rem; font-weight:700; opacity:0; transform:translate(-50%, 12px); pointer-events:none; transition:opacity .18s, transform .18s; }
 #toast.visible { opacity:1; transform:translate(-50%, 0); }
-@media (max-width:760px) { .app-shell { width:min(100% - 28px, 600px); padding-top:36px; } .controls, .editor-grid { grid-template-columns:1fr; } .hint { margin-top:-7px; } textarea { min-height:265px; } }
+@media (max-width:760px) { .app-shell { width:min(100% - 28px, 600px); padding-top:36px; } .controls, .editor-grid { grid-template-columns:1fr; } .hint { margin-top:-7px; } textarea { min-height:265px; } #boldButton { display:inline-block; } .input-actions span { display:none; } }

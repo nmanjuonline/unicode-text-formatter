@@ -57,6 +57,15 @@ $(function () {
     // Delimiters mark content to format; they are not part of the final output.
     $('#outputText').val(input.split(delimiter).map((part, index) => index % 2 ? [...part].map(c => convertCharacter(c, style)).join('') : part).join(''));
   }
+  function wrapSelectionInBold() {
+    const input = $('#inputText')[0];
+    const start = input.selectionStart, end = input.selectionEnd;
+    if (start === end) return;
+    const selected = input.value.slice(start, end);
+    input.setRangeText('**' + selected + '**', start, end, 'select');
+    input.focus();
+    formatText();
+  }
   let toastTimer;
   function showToast(message) { $('#toast').text(message).addClass('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').removeClass('visible'), 1500); }
   function copyOutput() {
@@ -64,7 +73,10 @@ $(function () {
     navigator.clipboard?.writeText(text).then(() => showToast('Copied to clipboard')).catch(() => { $('#outputText').trigger('focus').trigger('select'); showToast('Select output and copy'); });
   }
   $('#inputText, #delimiter, #fontStyle').on('input change', formatText);
-  $('#inputText').on('keydown', function (event) { if (event.ctrlKey && event.key.toLowerCase() === 'b') { event.preventDefault(); const start = this.selectionStart, end = this.selectionEnd; if (start !== end) { const selected = this.value.slice(start, end); this.setRangeText('**' + selected + '**', start, end, 'select'); formatText(); } } });
+  $('#inputText').on('keydown', function (event) { if (event.ctrlKey && event.key.toLowerCase() === 'b') { event.preventDefault(); wrapSelectionInBold(); } });
+  // Preventing mouse focus change retains a desktop selection; mobile selection
+  // offsets remain available after the button receives the tap.
+  $('#boldButton').on('mousedown', event => event.preventDefault()).on('click', wrapSelectionInBold);
   $('#copyButton').on('click', copyOutput);
   $('#outputText').on('focus', copyOutput);
   formatText();
