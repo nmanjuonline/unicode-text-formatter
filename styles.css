@@ -1,31 +1,262 @@
-:root { --ink:#152035; --muted:#657189; --line:#dce3ed; --paper:#fff; --accent:#635bff; --accent-dark:#463edc; --wash:#f3f5fb; }
-* { box-sizing:border-box; }
-body { margin:0; min-width:320px; color:var(--ink); background:radial-gradient(circle at 86% 0%, #e8e6ff 0, transparent 30rem), var(--wash); font-family:Manrope, Arial, sans-serif; }
-.app-shell { width:min(1120px, calc(100% - 40px)); margin:0 auto; padding:64px 0 48px; }
-.hero { max-width:680px; margin-bottom:34px; }
-.eyebrow { margin:0 0 8px; color:var(--accent); font-size:.73rem; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
-h1 { margin:0; font-size:clamp(2rem, 5vw, 3.45rem); letter-spacing:-.055em; line-height:1.03; }
-.intro { margin:15px 0 0; color:var(--muted); line-height:1.65; }
-.controls { display:grid; grid-template-columns:minmax(220px, 1fr) minmax(180px, .65fr) 1.35fr; gap:18px; align-items:end; margin-bottom:20px; padding:20px 22px; background:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.9); border-radius:18px; box-shadow:0 12px 32px rgba(31,42,72,.06); }
-label { display:grid; gap:7px; color:#47536a; font-size:.8rem; font-weight:800; letter-spacing:.02em; }
-select, input, textarea { width:100%; border:1px solid var(--line); border-radius:10px; color:var(--ink); background:var(--paper); font:500 .95rem Manrope, Arial, sans-serif; outline:none; transition:border-color .16s, box-shadow .16s; }
-select, input { height:42px; padding:0 12px; }
-textarea { min-height:365px; resize:vertical; padding:17px; font:400 .95rem/1.65 "Cambria Math", "Segoe UI Symbol", "Noto Sans Math", "Arial Unicode MS", sans-serif; }
-select:focus, input:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(99,91,255,.15); }
-.hint { margin:0 0 2px; color:var(--muted); font-size:.8rem; line-height:1.5; }
-code { padding:2px 5px; color:#4b43d3; background:#eeedff; border-radius:4px; font-family:"DM Mono", monospace; }
-.editor-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.panel { overflow:hidden; min-width:0; border:1px solid var(--line); border-radius:18px; background:var(--paper); box-shadow:0 12px 32px rgba(31,42,72,.06); }
-.panel-heading { display:flex; align-items:center; justify-content:space-between; min-height:55px; padding:0 17px; border-bottom:1px solid var(--line); }
-.panel-heading label { display:block; font-size:.82rem; }
-.panel-heading span { color:#8b95a7; font-size:.72rem; font-weight:600; }
-.input-actions { display:flex; align-items:center; gap:10px; }
-#boldButton { display:none; min-height:29px; padding:4px 8px; border:1px solid #d9d7ff; border-radius:7px; color:#4b43d3; background:#f4f3ff; font:700 .72rem Manrope, Arial, sans-serif; cursor:pointer; }
-#boldButton:hover { background:#eae9ff; }
-.panel textarea { display:block; border:0; border-radius:0; box-shadow:none; }
-.output-panel { border-color:#cbc8ff; }
-#copyButton { border:0; border-radius:8px; padding:7px 12px; color:#fff; background:var(--accent); font:800 .76rem Manrope, Arial, sans-serif; cursor:pointer; transition:background .16s, transform .16s; }
-#copyButton:hover { background:var(--accent-dark); } #copyButton:active { transform:translateY(1px); }
-#toast { position:fixed; z-index:5; bottom:24px; left:50%; padding:11px 17px; border-radius:9px; color:white; background:#17223a; box-shadow:0 8px 25px rgba(0,0,0,.18); font-size:.85rem; font-weight:700; opacity:0; transform:translate(-50%, 12px); pointer-events:none; transition:opacity .18s, transform .18s; }
-#toast.visible { opacity:1; transform:translate(-50%, 0); }
-@media (max-width:760px) { .app-shell { width:min(100% - 28px, 600px); padding-top:36px; } .controls, .editor-grid { grid-template-columns:1fr; } .hint { margin-top:-7px; } textarea { min-height:265px; } #boldButton { display:inline-block; } .input-actions span { display:none; } }
+:root {
+  --ink: #152035;
+  --muted: #657189;
+  --line: #dce3ed;
+  --paper: #fff;
+  --accent: #635bff;
+  --accent-dark: #463edc;
+  --wash: #f3f5fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background: radial-gradient(circle at 86% 0%, #e8e6ff 0, transparent 30rem), var(--wash);
+  font-family: Manrope, Arial, sans-serif;
+}
+
+.app-shell {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 64px 0 48px;
+}
+
+.hero {
+  max-width: 680px;
+  margin-bottom: 34px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: .73rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.45rem);
+  letter-spacing: -.055em;
+  line-height: 1.03;
+}
+
+.intro {
+  margin: 15px 0 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, .65fr) 1.35fr;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 20px;
+  padding: 20px 22px;
+  background: rgba(255, 255, 255, .8);
+  border: 1px solid rgba(255, 255, 255, .9);
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(31, 42, 72, .06);
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: #47536a;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+select,
+input,
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  background: var(--paper);
+  font: 500 .95rem Manrope, Arial, sans-serif;
+  outline: none;
+  transition: border-color .16s, box-shadow .16s;
+}
+
+select,
+input {
+  height: 42px;
+  padding: 0 12px;
+}
+
+textarea {
+  min-height: 365px;
+  resize: vertical;
+  padding: 17px;
+  font: 400 .95rem/1.65 "Cambria Math", "Segoe UI Symbol", "Noto Sans Math", "Arial Unicode MS", sans-serif;
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, .15);
+}
+
+.hint {
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+
+code {
+  padding: 2px 5px;
+  color: #4b43d3;
+  background: #eeedff;
+  border-radius: 4px;
+  font-family: "DM Mono", monospace;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 12px 32px rgba(31, 42, 72, .06);
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 55px;
+  padding: 0 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-heading label {
+  display: block;
+  font-size: .82rem;
+}
+
+.panel-heading span {
+  color: #8b95a7;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#boldButton {
+  display: none;
+  min-height: 29px;
+  padding: 4px 8px;
+  border: 1px solid #d9d7ff;
+  border-radius: 7px;
+  color: #4b43d3;
+  background: #f4f3ff;
+  font: 700 .72rem Manrope, Arial, sans-serif;
+  cursor: pointer;
+}
+
+#boldButton:hover {
+  background: #eae9ff;
+}
+
+.panel textarea {
+  display: block;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.output-panel {
+  border-color: #cbc8ff;
+}
+
+#copyButton {
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: #fff;
+  background: var(--accent);
+  font: 800 .76rem Manrope, Arial, sans-serif;
+  cursor: pointer;
+  transition: background .16s, transform .16s;
+}
+
+#copyButton:hover {
+  background: var(--accent-dark);
+}
+
+#copyButton:active {
+  transform: translateY(1px);
+}
+
+#toast {
+  position: fixed;
+  z-index: 5;
+  bottom: 24px;
+  left: 50%;
+  padding: 11px 17px;
+  border-radius: 9px;
+  color: white;
+  background: #17223a;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .18);
+  font-size: .85rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: opacity .18s, transform .18s;
+}
+
+#toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: min(100% - 28px, 600px);
+    padding-top: 36px;
+  }
+
+  .controls,
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hint {
+    margin-top: -7px;
+  }
+
+  textarea {
+    min-height: 265px;
+  }
+
+  #boldButton {
+    display: inline-block;
+  }
+
+  .input-actions span {
+    display: none;
+  }
+}
