@@ -74,9 +74,21 @@ $(function () {
   }
   $('#inputText, #delimiter, #fontStyle').on('input change', formatText);
   $('#inputText').on('keydown', function (event) { if (event.ctrlKey && event.key.toLowerCase() === 'b') { event.preventDefault(); wrapSelectionInBold(); } });
-  // Preventing mouse focus change retains a desktop selection; mobile selection
-  // offsets remain available after the button receives the tap.
-  $('#boldButton').on('mousedown', event => event.preventDefault()).on('click', wrapSelectionInBold);
+  // On touch screens, a click can move focus before it reads textarea.selectionStart.
+  // Pointer-down happens early enough to preserve the selected range.
+  let wrappedByPointer = false;
+  $('#boldButton').on('pointerdown', function (event) {
+    event.preventDefault();
+    wrappedByPointer = true;
+    wrapSelectionInBold();
+  }).on('click', function () {
+    // Keyboard activation has no preceding pointer event.
+    if (wrappedByPointer) {
+      wrappedByPointer = false;
+      return;
+    }
+    wrapSelectionInBold();
+  });
   $('#copyButton').on('click', copyOutput);
   $('#outputText').on('focus', copyOutput);
   formatText();
