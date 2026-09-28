@@ -23,35 +23,26 @@
         </p>
       </header>
 
-      <section class="controls" aria-label="Formatting options">
-        <label for="fontStyle">
-          Font style
-          <select id="fontStyle"></select>
-        </label>
-        <label for="delimiter">
-          Delimiter
-          <input id="delimiter" type="text" value="**" spellcheck="false" aria-describedby="delimiter-help">
-        </label>
-        <p id="delimiter-help" class="hint">Example: <code>Make **this** bold</code></p>
-      </section>
-
       <section class="editor-grid" aria-label="Text editor">
-        <div class="panel">
+        <div class="panel glass-panel">
           <div class="panel-heading">
             <label for="inputText">Input</label>
             <div class="input-actions">
+              <input id="delimiter" class="header-input" type="text" value="**" spellcheck="false" aria-label="Delimiter" title="Text Delimiter (e.g. **text**)">
               <button id="boldButton" type="button" aria-label="Wrap selected text in bold markers">
-                <strong>B</strong> Bold selection
+                <strong>B</strong>
               </button>
-              <span>Ctrl+B wraps a selection</span>
             </div>
           </div>
-          <textarea id="inputText" placeholder="Type or paste text here…" spellcheck="true"></textarea>
+          <textarea id="inputText" placeholder="Type or paste text here (e.g. **hello**)…" spellcheck="true"></textarea>
         </div>
-        <div class="panel output-panel">
+        <div class="panel glass-panel output-panel">
           <div class="panel-heading">
-            <label for="outputText">Formatted output</label>
-            <button id="copyButton" type="button">Copy</button>
+            <label for="outputText">Output</label>
+            <div class="input-actions">
+              <select id="fontStyle" class="header-select" aria-label="Font style"></select>
+              <button id="copyButton" type="button">Copy</button>
+            </div>
           </div>
           <textarea id="outputText" readonly aria-label="Formatted output" placeholder="Your formatted text will appear here"></textarea>
         </div>

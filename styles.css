@@ -99,100 +99,68 @@ h1 {
   max-width: 540px;
 }
 
-/* ─── Controls bar ────────────────────────────────────────────────────────── */
-.controls {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(180px, 0.65fr) 1.35fr;
-  gap: 24px;
-  align-items: end;
-  margin-bottom: 32px;
-  padding: 32px;
-  border-radius: var(--radius-xl);
-  
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-soft);
-}
-
-/* ─── Labels & inputs ─────────────────────────────────────────────────────── */
-label {
-  display: grid;
-  gap: 12px;
+/* ─── Header Inputs & Select ──────────────────────────────────────────────── */
+.header-select,
+.header-input {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-sm);
   color: var(--text-main);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  background: var(--glass-input);
+  font: 500 0.9rem 'Inter', sans-serif;
+  outline: none;
+  transition: all var(--transition);
+  height: 36px;
+  padding: 0 12px;
 }
 
-select,
-input,
+.header-input {
+  width: 60px;
+  text-align: center;
+}
+
+.header-select {
+  width: 180px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.header-select:hover,
+.header-input:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.header-select:focus,
+.header-input:focus {
+  background: #ffffff;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-focus);
+}
+
 textarea {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius-sm);
   color: var(--text-main);
   background: var(--glass-input);
-  font: 500 1rem 'Inter', sans-serif;
+  font: 500 1.05rem/1.6 "Cambria Math", "Segoe UI Symbol", "Noto Sans Math", sans-serif;
   outline: none;
   transition: all var(--transition);
-}
-
-select {
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 48px;
-  cursor: pointer;
-}
-
-select:hover,
-input:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
-
-select,
-input {
-  height: 52px;
-  padding: 0 16px;
-}
-
-textarea {
   min-height: 380px;
   resize: vertical;
   padding: 24px;
-  font: 500 1.05rem/1.6 "Cambria Math", "Segoe UI Symbol", "Noto Sans Math", sans-serif;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+textarea:focus {
   background: #ffffff;
   border-color: var(--accent);
   box-shadow: var(--shadow-focus);
 }
 
-/* ─── Hint & code ─────────────────────────────────────────────────────────── */
-.hint {
-  margin: 0 0 4px;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  line-height: 1.6;
-}
-
-code {
-  padding: 4px 8px;
-  color: #4338ca;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 6px;
-  font-family: "DM Mono", monospace;
-  font-size: 0.9em;
-  font-weight: 600;
-}
 
 /* ─── Editor grid ─────────────────────────────────────────────────────────── */
 .editor-grid {
@@ -393,29 +361,20 @@ code {
     padding-top: 48px;
   }
 
-  .controls,
   .editor-grid {
     grid-template-columns: 1fr;
-  }
-
-  .controls {
-    padding: 24px;
-  }
-
-  .hint {
-    margin-top: -8px;
   }
 
   .panel textarea {
     min-height: 280px;
   }
 
-  #boldButton {
-    display: inline-flex;
+  .header-select {
+    width: 130px;
   }
 
-  .input-actions span {
-    display: none;
+  #boldButton {
+    display: inline-flex;
   }
 
   h1 {
