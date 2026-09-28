@@ -29,7 +29,12 @@ if (typeof window.jQuery === 'undefined') {
       ['SmallCaps', 'Small Caps'],
       ['Superscript', 'Superscript'],
       ['Subscript', 'Subscript'],
-      ['Inverted', 'Inverted']
+      ['Inverted', 'Inverted'],
+      ['Squared', 'Squared'],
+      ['RegionalIndicator', 'Regional Indicator'],
+      ['Strikethrough', 'Strikethrough'],
+      ['Underline', 'Underline'],
+      ['Slash', 'Slash']
     ];
 
     const offsets = {
@@ -97,15 +102,25 @@ if (typeof window.jQuery === 'undefined') {
       'ɐqɔpǝɟƃɥᴉɾʞlɯuo dbɹsʇnʌʍxʎz∀BƆDƎℲפHIſʞ˥WN OԀQRS┴∩ΛMX⅄ZƖᄅƐㄣϛ9ㄥ86 0˙\'¿¡„,)(][}{⅋‾'.replaceAll(' ', '')
     );
 
+    const squared = map(
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      '🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉'
+    );
+
+    const regionalIndicator = map(
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      '🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿'
+    );
+
     const fullWidth = (c) =>
       c === ' ' ? '　' : c >= '!' && c <= '~' ? String.fromCodePoint(c.codePointAt(0) + 0xFEE0) : c;
 
-    styles.forEach(([value, label]) => {
-      $('#fontStyle').append($('<option>', { value, text: label }));
-    });
 
     function convertCharacter(c, style) {
       if (style === 'FullWidth') return fullWidth(c);
+      if (style === 'Strikethrough') return c + '\u0336';
+      if (style === 'Underline') return c + '\u0332';
+      if (style === 'Slash') return c + '\u0338';
 
       const special = {
         Script: script,
@@ -116,7 +131,9 @@ if (typeof window.jQuery === 'undefined') {
         SmallCaps: smallCaps,
         Superscript: superscript,
         Subscript: subscript,
-        Inverted: inverted
+        Inverted: inverted,
+        Squared: squared,
+        RegionalIndicator: regionalIndicator
       }[style];
 
       if (special) return special[c] || c;
@@ -130,6 +147,11 @@ if (typeof window.jQuery === 'undefined') {
       if (code >= 48 && code <= 57 && offset[2]) return String.fromCodePoint(code + offset[2]);
       return c;
     }
+
+    styles.forEach(([value, label]) => {
+      const previewText = [...label].map(c => convertCharacter(c, value)).join('');
+      $('#fontStyle').append($('<option>', { value, text: previewText }));
+    });
 
     function formatText() {
       const input = $('#inputText').val();
