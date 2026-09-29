@@ -1,61 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Convert marked text into Unicode display styles.">
-    <title>Unicode Text Formatter</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono&family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    >
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <main class="app-shell">
-      <header class="hero">
-        <p class="eyebrow">Unicode tools</p>
-        <h1>Text Formatter</h1>
-        <p class="intro">
-          Wrap the text you want to transform with a delimiter. Your formatted text updates as you type.
-        </p>
-      </header>
 
-      <section class="editor-grid" aria-label="Text editor">
-        <div class="panel glass-panel">
-          <div class="panel-heading">
-            <label for="inputText">Input</label>
-            <div class="input-actions">
-              <input id="delimiter" class="header-input" type="text" value="**" spellcheck="false" aria-label="Delimiter" title="Text Delimiter (e.g. **text**)">
-              <button id="boldButton" type="button" aria-label="Wrap selected text in bold markers">
-                <strong>B</strong>
-              </button>
-            </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Convert marked text into Unicode display styles.">
+  <title>Unicode Text Formatter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <p class="eyebrow">Unicode tools</p>
+      <h1>Text Formatter</h1>
+      <p class="intro">
+        Wrap the text you want to transform with a delimiter. Your formatted text updates as you type.
+      </p>
+    </header>
+
+    <section class="editor-grid" aria-label="Text editor">
+      <div class="panel glass-panel">
+        <div class="panel-heading">
+          <label for="inputText">Input</label>
+          <div class="input-actions">
+            <input id="delimiter" class="header-input" type="text" value="**" spellcheck="false" aria-label="Delimiter"
+              title="Text Delimiter (e.g. **text**)">
+            <button id="boldButton" type="button" aria-label="Wrap selected text in bold markers">
+              <strong>B</strong>
+            </button>
           </div>
-          <textarea id="inputText" placeholder="Type or paste text here (e.g. **hello**)…" spellcheck="true"></textarea>
         </div>
-        <div class="panel glass-panel output-panel">
-          <div class="panel-heading">
-            <label for="outputText">Output</label>
-            <div class="input-actions">
-              <select id="fontStyle" class="header-select" aria-label="Font style"></select>
-              <button id="copyButton" type="button">Copy</button>
-            </div>
+        <textarea id="inputText" placeholder="Type or paste text here (e.g. **hello**)…" spellcheck="true"></textarea>
+        <span class="char-count" id="inputCharCount">0 chars</span>
+      </div>
+      <div class="panel glass-panel output-panel">
+        <div class="panel-heading">
+          <label for="outputText">Output</label>
+          <div class="input-actions">
+            <select id="fontStyle" class="header-select" aria-label="Font style"></select>
+            <button id="copyButton" type="button">Copy</button>
           </div>
-          <textarea id="outputText" readonly aria-label="Formatted output" placeholder="Your formatted text will appear here"></textarea>
         </div>
-      </section>
-    </main>
+        <textarea id="outputText" readonly aria-label="Formatted output"
+          placeholder="Your formatted text will appear here"></textarea>
+        <span class="char-count" id="outputCharCount">0 chars</span>
+      </div>
+    </section>
+  </main>
 
-    <div id="toast" role="status" aria-live="polite">Copied to clipboard</div>
+  <div id="toast" role="status" aria-live="polite">Copied to clipboard</div>
 
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.min.js"
-      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-      crossorigin="anonymous"
-    ></script>
-    <script src="app.js"></script>
-  </body>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+
 </html>

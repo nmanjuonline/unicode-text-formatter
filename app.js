@@ -153,12 +153,23 @@ if (typeof window.jQuery === 'undefined') {
       $('#fontStyle').append($('<option>', { value, text: previewText }));
     });
 
+    function updateCharCount() {
+      const inputLen = $('#inputText').val().length;
+      const outputLen = $('#outputText').val().length;
+      $('#inputCharCount').text(inputLen + (inputLen === 1 ? ' char' : ' chars'));
+      $('#outputCharCount').text(outputLen + (outputLen === 1 ? ' char' : ' chars'));
+    }
+
     function formatText() {
       const input = $('#inputText').val();
       const delimiter = $('#delimiter').val();
       const style = $('#fontStyle').val();
 
-      if (!input || !delimiter) return $('#outputText').val(input);
+      if (!input || !delimiter) {
+        $('#outputText').val(input);
+        updateCharCount();
+        return;
+      }
 
       // Delimiters mark content to format; they are not part of the final output.
       $('#outputText').val(
@@ -169,6 +180,7 @@ if (typeof window.jQuery === 'undefined') {
           )
           .join('')
       );
+      updateCharCount();
     }
 
     function wrapSelectionInBold() {
