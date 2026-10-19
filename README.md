@@ -6,21 +6,29 @@ Use it to make selected text appear bold, italic, script, Fraktur, double-struck
 
 ## Features
 
+- **Progressive Web App (PWA)**: Installable on desktop and mobile devices (Chrome, Edge, Safari, Firefox).
+- **100% Offline Capable**: Fully functional without an internet connection using Service Worker caching and local bundled assets.
 - Converts only text enclosed by a chosen delimiter.
 - Removes delimiters from the resulting output.
 - Updates the formatted output live while you type.
-- Includes 20 Unicode styles.
+- Includes 25 Unicode styles.
 - Provides a Copy button and copies the output when the output field is focused.
 - Supports `Ctrl+B` on desktop to wrap a selection in `**` markers.
 - Provides a mobile-only **Bold selection** button as an alternative to `Ctrl+B`.
-- Bundles jQuery locally, so the app works without an internet connection after it has been downloaded.
+- Bundles jQuery locally with CDN fallback, ensuring complete reliability offline.
 - Uses Unicode-capable font fallbacks to display mathematical alphabets where the operating system supports them.
 
 ## Run locally
 
-This is a static site. Open [index.html](index.html) in a modern browser.
+This is a static PWA. Open [index.html](index.html) in any modern browser, or serve it with a local static server to test service worker installation:
 
-No installation or local web server is needed. If you prefer to use a local server during development, serve this folder with any static-file server.
+```bash
+# Using Python
+python -m http.server 8000
+
+# Using Node.js
+npx serve .
+```
 
 ## How to use it
 

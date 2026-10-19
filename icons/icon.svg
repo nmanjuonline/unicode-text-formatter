@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+
+    <!-- Radial Top Glow -->
+    <radialGradient id="topGlow" cx="20%" cy="15%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#1e1b4b" flood-opacity="0.25" />
+    </filter>
+
+    <!-- Glyph Shadow Filter -->
+    <filter id="textShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="20" y="20" width="472" height="472" rx="104" ry="104" fill="url(#bgGrad)" filter="url(#dropShadow)" />
+  <rect x="20" y="20" width="472" height="472" rx="104" ry="104" fill="url(#topGlow)" />
+  <rect x="20" y="20" width="472" height="472" rx="104" ry="104" fill="none" stroke="rgba(255, 255, 255, 0.45)" stroke-width="4" />
+
+  <!-- Center 'U' Typographic Glyph -->
+  <text x="50%" y="64%" font-family="system-ui, -apple-system, 'Segoe UI', 'Inter', Roboto, sans-serif" font-size="280" font-weight="800" fill="#ffffff" text-anchor="middle" filter="url(#textShadow)">U</text>
+
+  <!-- Large Sparkle (Top Right) -->
+  <path d="M 390 120 Q 390 148 418 148 Q 390 148 390 176 Q 390 148 362 148 Q 390 148 390 120 Z" fill="#ffffff" opacity="0.95" />
+
+  <!-- Small Sparkle (Bottom Left) -->
+  <path d="M 120 370 Q 120 388 138 388 Q 120 388 120 406 Q 120 388 102 388 Q 120 388 120 370 Z" fill="#fde047" opacity="0.9" />
+
+  <!-- Accent Shimmer Dot (Top Left) -->
+  <circle cx="135" cy="135" r="7" fill="#93c5fd" opacity="0.8" />
+</svg>

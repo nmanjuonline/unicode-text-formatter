@@ -252,3 +252,69 @@ if (typeof window.jQuery === 'undefined') {
     formatText();
   });
 }
+
+/* ─── PWA & Service Worker Registration ───────────────────────────────────── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./sw.js')
+      .then((registration) => {
+        // Automatically check for SW updates
+        registration.addEventListener('updatefound', () => {
+          const installingWorker = registration.installing;
+          if (installingWorker) {
+            installingWorker.addEventListener('statechange', () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('Unicode Text Formatter updated. Ready for next visit.');
+              }
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('Service Worker registration failed:', error);
+      });
+  });
+}
+
+// Handle PWA installation prompt
+let deferredPrompt = null;
+const installButton = document.getElementById('installButton');
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  // Prevent immediate browser mini-infobar
+  event.preventDefault();
+  deferredPrompt = event;
+
+  // Reveal the custom install button in the UI
+  if (installButton) {
+    installButton.hidden = false;
+  }
+});
+
+if (installButton) {
+  installButton.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    installButton.hidden = true;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('PWA installation accepted by user');
+    }
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  if (installButton) {
+    installButton.hidden = true;
+  }
+  deferredPrompt = null;
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = 'App installed successfully!';
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2000);
+  }
+});
+
