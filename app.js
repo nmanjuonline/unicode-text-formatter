@@ -1,6 +1,6 @@
 /* ==========================================================================
    Unicode Text Formatter - Main Application Logic
-   Accessible, High-Performance, Dual-Mode Formatting & Live Styles Gallery
+   Clean, Fast, Automatic Formatting & Live Styles Gallery
    ========================================================================== */
 
 /* global $ */
@@ -164,21 +164,21 @@ if (typeof window.jQuery === 'undefined') {
       return [...text].map(c => convertCharacter(c, style)).join('');
     }
 
-    function formatTextForStyle(input, style, mode, delimiter) {
+    // Smart Automatic Formatter:
+    // If text contains the delimiter marker (e.g. **), formats only the marked portions.
+    // If text has no markers, formats the entire input.
+    function formatTextForStyle(input, style, delimiter) {
       if (!input) return '';
-      if (mode === 'all') {
-        return transformString(input, style);
+      if (delimiter && input.includes(delimiter)) {
+        return input
+          .split(delimiter)
+          .map((part, index) => (index % 2 ? transformString(part, style) : part))
+          .join('');
       }
-      // Delimited mode:
-      if (!delimiter) return input;
-      return input
-        .split(delimiter)
-        .map((part, index) => (index % 2 ? transformString(part, style) : part))
-        .join('');
+      return transformString(input, style);
     }
 
     // ─── Application State ──────────────────────────────────────────────────
-    let currentMode = 'all'; // 'all' | 'delimited'
     let lastClearedText = '';
     let currentCategoryFilter = 'all';
     let currentSearchQuery = '';
@@ -242,10 +242,10 @@ if (typeof window.jQuery === 'undefined') {
     // ─── Main Formatting Function ───────────────────────────────────────────
     function formatText() {
       const input = $('#inputText').val();
-      const delimiter = $('#delimiter').val();
+      const delimiter = $('#delimiter').val() || '**';
       const style = $('#fontStyle').val();
 
-      const output = formatTextForStyle(input, style, currentMode, delimiter);
+      const output = formatTextForStyle(input, style, delimiter);
       $('#outputText').val(output);
       updateCounts();
       updateGalleryPreviews();
@@ -284,11 +284,11 @@ if (typeof window.jQuery === 'undefined') {
       }
 
       const input = $('#inputText').val();
-      const delimiter = $('#delimiter').val();
+      const delimiter = $('#delimiter').val() || '**';
       const sampleText = input || 'Sample Text 123';
 
       filteredStyles.forEach(([val, label, cat]) => {
-        const formatted = formatTextForStyle(sampleText, val, currentMode, delimiter);
+        const formatted = formatTextForStyle(sampleText, val, delimiter);
 
         const $card = $('<div>', {
           class: 'style-card',
@@ -329,7 +329,7 @@ if (typeof window.jQuery === 'undefined') {
           title: `Copy ${label} text`
         }).on('click', function (e) {
           e.stopPropagation();
-          const textToCopy = formatTextForStyle($('#inputText').val() || sampleText, val, currentMode, delimiter);
+          const textToCopy = formatTextForStyle($('#inputText').val() || sampleText, val, delimiter);
           copyTextToClipboard(textToCopy, $(this));
         });
 
@@ -347,12 +347,12 @@ if (typeof window.jQuery === 'undefined') {
 
     function updateGalleryPreviews() {
       const input = $('#inputText').val();
-      const delimiter = $('#delimiter').val();
+      const delimiter = $('#delimiter').val() || '**';
       const sampleText = input || 'Sample Text 123';
 
       $('.style-card').each(function () {
         const val = $(this).attr('data-style');
-        const formatted = formatTextForStyle(sampleText, val, currentMode, delimiter);
+        const formatted = formatTextForStyle(sampleText, val, delimiter);
         $(this).find('.style-card-preview').text(formatted);
       });
     }
@@ -430,13 +430,8 @@ if (typeof window.jQuery === 'undefined') {
       const end = input.selectionEnd;
       const delimiter = $('#delimiter').val() || '**';
 
-      // If in entire text mode, prompt or switch to delimited mode for convenience
-      if (currentMode === 'all') {
-        switchMode('delimited');
-      }
-
       if (start === end) {
-        // No selection: insert delimiter markers and place cursor in between
+        // No selection: insert marker pair and place cursor between
         input.setRangeText(delimiter + delimiter, start, end, 'end');
         input.selectionStart = input.selectionEnd = start + delimiter.length;
       } else {
@@ -523,31 +518,12 @@ if (typeof window.jQuery === 'undefined') {
     }
 
     function loadExample() {
-      if (currentMode === 'all') {
-        $('#inputText').val('Transform any text into bold, script, and stylish Unicode letters with instant preview!');
-      } else {
-        const delim = $('#delimiter').val() || '**';
-        $('#inputText').val(
-          `Welcome to ${delim}Unicode Text Formatter${delim}! Make ${delim}important words${delim} stand out in messages and posts.`
-        );
-      }
+      const delim = $('#delimiter').val() || '**';
+      $('#inputText').val(
+        `Welcome to ${delim}Unicode Text Formatter${delim}! Type anything to format it, or wrap ${delim}specific words${delim} with markers to format only them.`
+      );
       formatText();
       showToast('Loaded example text');
-    }
-
-    // ─── Mode Switching ─────────────────────────────────────────────────────
-    function switchMode(mode) {
-      currentMode = mode;
-      $('.segment-btn').removeClass('active').attr('aria-checked', 'false');
-      if (mode === 'all') {
-        $('#modeAll').addClass('active').attr('aria-checked', 'true');
-        $('#delimiterSettings').prop('hidden', true);
-      } else {
-        $('#modeDelimited').addClass('active').attr('aria-checked', 'true');
-        $('#delimiterSettings').prop('hidden', false);
-      }
-      formatText();
-      buildGalleryGrid();
     }
 
     // ─── Theme Management ───────────────────────────────────────────────────
@@ -608,28 +584,6 @@ if (typeof window.jQuery === 'undefined') {
     // ─── Event Bindings ─────────────────────────────────────────────────────
     $('#inputText, #delimiter').on('input propertychange', formatText);
     $('#fontStyle').on('change', formatText);
-
-    // Segmented Mode Buttons
-    $('#modeAll').on('click', () => switchMode('all'));
-    $('#modeDelimited').on('click', () => switchMode('delimited'));
-
-    // Delimiter presets
-    $('.preset-chip').on('click', function () {
-      $('.preset-chip').removeClass('active');
-      $(this).addClass('active');
-      const val = $(this).attr('data-delim');
-      $('#delimiter').val(val);
-      $('#currentDelimPreview').text(val);
-      formatText();
-      showToast(`Marker set to ${val}`);
-    });
-
-    $('#delimiter').on('input', function () {
-      const val = $(this).val();
-      $('#currentDelimPreview').text(val || '(empty)');
-      $('.preset-chip').removeClass('active');
-      $(`.preset-chip[data-delim="${val}"]`).addClass('active');
-    });
 
     // Action Toolbar Buttons
     $('#boldButton').on('click', wrapSelectionInDelimiter);

@@ -37,17 +37,16 @@ npx serve .
 
 ## How to use it
 
-### Mode 1: Format Entire Text (Default)
-1. Select your preferred style from the dropdown or quick style pills.
-2. Type or paste your text into the **Input** pane (or click **Try Example**).
-3. The **Formatted Output** pane updates instantly as you type.
-4. Click **Copy** (or press `Ctrl+Enter` / `⌘+Enter`).
+1. Type or paste your text into the **Input** pane (or click **✨ Try Example**).
+2. By default, your **entire text** is formatted live in the selected style.
+3. If you only want to format **specific words**, wrap them with markers like `**word**`. Unmarked words remain plain text.
+4. Pick any style from the dropdown, quick style pills, or click any card in the **All Styles Preview**.
+5. Click **Copy** (or press `Ctrl+Enter` / `⌘+Enter`).
 
-### Mode 2: Marked Text
-1. Switch to **Marked Text (`**text**`)** mode using the top segmented control.
-2. Choose or customize your marker (presets available: `**`, `*`, `_`, `~`, `[[ ]]`).
-3. Surround the specific words you want formatted with the marker.
-4. Only marked sections are converted; unmarked text remains unchanged.
+For example:
+- Input `Hello world` -> Formatted Output: `𝐇𝐞𝐥𝐥𝐨 𝐰𝐨𝐫𝐥𝐝`
+- Input `Hello **world**` -> Formatted Output: `Hello 𝐰𝐨𝐫𝐥𝐝`
+- To quickly wrap selected text in markers, select the words and press `Ctrl+B` (or click **Wrap**).
 
 ### Keyboard Shortcuts
 
