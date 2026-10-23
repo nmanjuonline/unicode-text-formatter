@@ -3,7 +3,7 @@
    Provides full offline functionality, asset caching, and fast loading.
    ========================================================================== */
 
-const CACHE_NAME = 'unicode-text-formatter-v1';
+const CACHE_NAME = 'unicode-text-formatter-v2';
 
 // Static assets to precache on install
 const PRECACHE_ASSETS = [

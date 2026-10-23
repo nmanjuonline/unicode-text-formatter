@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Convert marked text into Unicode display styles.">
-  <title>Unicode Text Formatter</title>
+  <meta name="description" content="Transform text into bold, script, fraktur, monospace, and 20+ Unicode styles instantly with live preview, offline support, and one-click copy.">
+  <title>Unicode Text Formatter - Live Unicode Styles & Generator</title>
 
   <!-- PWA & Mobile Meta Tags -->
-  <meta name="theme-color" content="#6366f1">
+  <meta name="theme-color" content="#6366f1" id="themeColorMeta">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -23,19 +23,31 @@
   <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
+  <!-- Google Fonts Preconnect & Styles -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=Inter:wght@400;500;600;700;800&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+  <div class="background-decorations" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
   <main class="app-shell">
-    <header class="hero">
-      <div class="hero-badges">
-        <p class="eyebrow">Unicode tools</p>
-        <button id="installButton" class="install-btn" type="button" hidden aria-label="Install Unicode Text Formatter as app">
+    <!-- Top Navigation / Utility Bar -->
+    <header class="top-nav">
+      <div class="brand-badge">
+        <span class="brand-icon" aria-hidden="true">✨</span>
+        <span class="brand-text">Unicode Text Formatter</span>
+      </div>
+
+      <div class="nav-controls">
+        <button id="installButton" class="nav-btn install-btn" type="button" hidden aria-label="Install Unicode Text Formatter as app">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
@@ -43,45 +55,276 @@
           </svg>
           <span>Install App</span>
         </button>
+
+        <button id="helpButton" class="nav-btn" type="button" aria-label="Keyboard shortcuts and help guide" title="Shortcuts & Tips (Ctrl+/)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span class="desktop-only">Shortcuts</span>
+        </button>
+
+        <button id="themeButton" class="nav-btn theme-toggle-btn" type="button" aria-label="Toggle visual theme (Auto/Light/Dark)" title="Toggle Theme">
+          <span id="themeIcon" aria-hidden="true">🌓</span>
+          <span id="themeLabel" class="desktop-only">Theme</span>
+        </button>
       </div>
-      <h1>Text Formatter</h1>
-      <p class="intro">
-        Wrap the text you want to transform with a delimiter. Your formatted text updates as you type.
-      </p>
     </header>
 
+    <!-- Hero Header -->
+    <section class="hero">
+      <h1 class="hero-title">Text Formatter</h1>
+      <p class="hero-subtitle">
+        Transform your text into bold, script, monospace, and 20+ Unicode styles ready to copy & paste anywhere.
+      </p>
+
+      <!-- Formatting Mode Selector -->
+      <div class="mode-selector-container">
+        <div class="segmented-control" role="radiogroup" aria-label="Formatting mode">
+          <button type="button" role="radio" aria-checked="false" id="modeDelimited" class="segment-btn" data-mode="delimited">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="6" cy="6" r="3"></circle>
+              <circle cx="6" cy="18" r="3"></circle>
+              <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+              <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+              <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+            </svg>
+            <span>Marked Text (<code class="inline-code">**text**</code>)</span>
+          </button>
+          <button type="button" role="radio" aria-checked="true" id="modeAll" class="segment-btn active" data-mode="all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Format Entire Text</span>
+          </button>
+        </div>
+
+        <button type="button" id="loadExampleButton" class="example-btn" title="Load sample text to see formatting in action">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+          </svg>
+          <span>Try Example</span>
+        </button>
+      </div>
+
+      <!-- Delimiter Settings Bar (Conditional based on mode) -->
+      <div id="delimiterSettings" class="delimiter-settings" hidden>
+        <div class="delimiter-inline">
+          <label for="delimiter" class="delimiter-label">Marker:</label>
+          <input id="delimiter" class="header-input delimiter-input" type="text" value="**" spellcheck="false"
+            aria-label="Delimiter marker" title="Marker used before and after text to format (e.g. **text**)">
+          <div class="delimiter-presets" aria-label="Quick marker presets">
+            <span class="preset-label">Presets:</span>
+            <button type="button" class="preset-chip active" data-delim="**">**bold**</button>
+            <button type="button" class="preset-chip" data-delim="*">*italic*</button>
+            <button type="button" class="preset-chip" data-delim="_">_text_</button>
+            <button type="button" class="preset-chip" data-delim="~">~tilde~</button>
+            <button type="button" class="preset-chip" data-delim="[[">[[brackets]]</button>
+          </div>
+        </div>
+        <p class="delimiter-tip" id="delimiterHint">
+          Surround sections with <strong id="currentDelimPreview">**</strong> to format only those words.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Dual Editor Workspace -->
     <section class="editor-grid" aria-label="Text editor">
-      <div class="panel glass-panel">
+      <!-- Input Panel -->
+      <div class="panel glass-panel input-panel">
         <div class="panel-heading">
-          <label for="inputText">Input</label>
-          <div class="input-actions">
-            <input id="delimiter" class="header-input" type="text" value="**" spellcheck="false" aria-label="Delimiter"
-              title="Text Delimiter (e.g. **text**)">
-            <button id="boldButton" type="button" aria-label="Wrap selected text in bold markers">
-              <strong>B</strong>
+          <div class="heading-left">
+            <label for="inputText" class="panel-title">Input</label>
+          </div>
+
+          <div class="input-actions" role="toolbar" aria-label="Input actions">
+            <button id="boldButton" class="action-btn" type="button" title="Wrap selection in delimiter (Ctrl+B / ⌘+B)" aria-label="Wrap selection in delimiter">
+              <span class="btn-bold-icon" aria-hidden="true">B</span>
+              <span class="btn-text">Wrap</span>
+            </button>
+            <button id="pasteButton" class="action-btn" type="button" title="Paste from clipboard" aria-label="Paste from clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              </svg>
+              <span class="btn-text">Paste</span>
+            </button>
+            <button id="clearButton" class="action-btn action-btn-subtle" type="button" title="Clear input text" aria-label="Clear input text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              <span class="btn-text">Clear</span>
             </button>
           </div>
         </div>
-        <textarea id="inputText" placeholder="Type or paste text here (e.g. **hello**)…" spellcheck="true"></textarea>
-        <span class="char-count" id="inputCharCount">0 chars</span>
+
+        <div class="textarea-wrapper">
+          <textarea id="inputText" placeholder="Type or paste text here (or click 'Try Example' above)…" spellcheck="true" aria-label="Input text to format"></textarea>
+        </div>
+
+        <div class="panel-footer">
+          <span class="counts-badge" id="inputCharCount" aria-live="polite">0 words • 0 chars</span>
+        </div>
       </div>
+
+      <!-- Output Panel -->
       <div class="panel glass-panel output-panel">
         <div class="panel-heading">
-          <label for="outputText">Output</label>
-          <div class="input-actions">
-            <select id="fontStyle" class="header-select" aria-label="Font style"></select>
-            <button id="copyButton" type="button">Copy</button>
+          <div class="heading-left">
+            <label for="outputText" class="panel-title">Formatted Output</label>
+          </div>
+
+          <div class="input-actions" role="toolbar" aria-label="Output actions">
+            <div class="select-wrapper">
+              <select id="fontStyle" class="header-select" aria-label="Select font style"></select>
+            </div>
+
+            <button id="copyButton" class="action-btn primary-btn" type="button" aria-label="Copy formatted output to clipboard" title="Copy output (Ctrl+Enter / ⌘+Enter)">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+              </svg>
+              <span class="copy-text">Copy</span>
+            </button>
+
+            <button id="shareButton" class="action-btn action-icon-only" type="button" title="Share formatted text" aria-label="Share formatted text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </button>
+
+            <button id="downloadButton" class="action-btn action-icon-only" type="button" title="Download text as .txt file" aria-label="Download text as file">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </button>
           </div>
         </div>
-        <textarea id="outputText" readonly aria-label="Formatted output"
-          placeholder="Your formatted text will appear here"></textarea>
-        <span class="char-count" id="outputCharCount">0 chars</span>
+
+        <div class="textarea-wrapper">
+          <textarea id="outputText" readonly aria-label="Formatted output"
+            placeholder="Your formatted text will appear here…"></textarea>
+        </div>
+
+        <div class="panel-footer">
+          <span class="counts-badge" id="outputCharCount" aria-live="polite">0 words • 0 chars</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Styles Quick Switch Bar -->
+    <section class="quick-styles-bar" aria-label="Popular quick styles">
+      <div class="quick-styles-heading">
+        <span>Popular Styles:</span>
+      </div>
+      <div class="quick-styles-list" id="popularStylesList">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- All Styles Live Gallery -->
+    <section class="gallery-section glass-panel" aria-label="All styles preview gallery">
+      <div class="gallery-header">
+        <div class="gallery-title-group">
+          <h2>All Styles Preview</h2>
+          <span class="badge" id="stylesCountBadge">25 styles</span>
+        </div>
+
+        <div class="gallery-controls">
+          <div class="search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input id="styleSearch" type="search" placeholder="Search styles…" aria-label="Filter style list">
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="Filter styles by category">
+        <button type="button" class="cat-pill active" role="tab" aria-selected="true" data-cat="all">All (25)</button>
+        <button type="button" class="cat-pill" role="tab" aria-selected="false" data-cat="Classic">Classic</button>
+        <button type="button" class="cat-pill" role="tab" aria-selected="false" data-cat="Mathematical & Script">Math & Script</button>
+        <button type="button" class="cat-pill" role="tab" aria-selected="false" data-cat="Enclosed">Enclosed</button>
+        <button type="button" class="cat-pill" role="tab" aria-selected="false" data-cat="Decorative">Decorative</button>
+        <button type="button" class="cat-pill" role="tab" aria-selected="false" data-cat="Effects">Effects</button>
+      </div>
+
+      <!-- Live Cards Grid -->
+      <div class="style-cards-grid" id="styleCardsGrid" aria-live="polite">
+        <!-- Generated dynamically in app.js -->
       </div>
     </section>
   </main>
 
-  <div id="toast" role="status" aria-live="polite">Copied to clipboard</div>
+  <!-- Help & Shortcuts Modal Dialog -->
+  <dialog id="helpModal" class="help-dialog" aria-labelledby="helpModalTitle">
+    <div class="dialog-content glass-panel">
+      <div class="dialog-header">
+        <h3 id="helpModalTitle">Help &amp; Shortcuts</h3>
+        <button type="button" class="close-dialog-btn" id="closeHelpModal" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
 
+      <div class="dialog-body">
+        <h4>Keyboard Shortcuts</h4>
+        <div class="shortcuts-table">
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Wrap selection with marker</span>
+            <span class="keys"><kbd>Ctrl</kbd> + <kbd>B</kbd> or <kbd>⌘</kbd> + <kbd>B</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Copy formatted output</span>
+            <span class="keys"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> or <kbd>⌘</kbd> + <kbd>Enter</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Clear input</span>
+            <span class="keys"><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Open shortcuts &amp; help</span>
+            <span class="keys"><kbd>Ctrl</kbd> + <kbd>/</kbd> or <kbd>?</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Close dialog</span>
+            <span class="keys"><kbd>Esc</kbd></span>
+          </div>
+        </div>
+
+        <h4>Formatting Modes</h4>
+        <ul class="help-list">
+          <li><strong>Format Entire Text:</strong> Converts all typed or pasted characters immediately. Great for social media posts, bios, and headlines.</li>
+          <li><strong>Marked Text:</strong> Only text wrapped in the chosen delimiter (e.g. <code>**bold**</code>) is converted. Everything outside delimiters remains normal text.</li>
+        </ul>
+
+        <h4>Offline &amp; Privacy</h4>
+        <p class="help-note">
+          100% of formatting happens locally in your browser. No text is sent to any server. This app functions entirely offline.
+        </p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification with Action Support -->
+  <div id="toast" role="status" aria-live="polite">
+    <span id="toastMessage">Copied to clipboard</span>
+    <button id="toastAction" class="toast-action-btn" type="button" hidden>Undo</button>
+  </div>
+
+  <!-- Scripts -->
   <script src="jquery-3.7.1.min.js"></script>
   <script>window.jQuery || document.write('<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"><\/script>')</script>
   <script src="app.js"></script>

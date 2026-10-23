@@ -1,41 +1,55 @@
+/* ==========================================================================
+   Unicode Text Formatter - Main Application Logic
+   Accessible, High-Performance, Dual-Mode Formatting & Live Styles Gallery
+   ========================================================================== */
+
 /* global $ */
 if (typeof window.jQuery === 'undefined') {
   document.addEventListener('DOMContentLoaded', function () {
     const toast = document.getElementById('toast');
-    toast.textContent = 'jQuery could not be loaded. Check your internet connection and reload.';
-    toast.classList.add('visible');
+    if (toast) {
+      toast.textContent = 'jQuery could not be loaded. Please reload the page.';
+      toast.classList.add('visible');
+    }
   });
 } else {
   $(function () {
     'use strict';
 
+    // ─── Style Definitions (with Categorization for UX clarity) ─────────────
     const styles = [
-      ['Bold', 'Bold'],
-      ['Italic', 'Italic'],
-      ['BoldItalic', 'Bold Italic'],
-      ['Script', 'Script'],
-      ['BoldScript', 'Bold Script'],
-      ['Fraktur', 'Fraktur'],
-      ['BoldFraktur', 'Bold Fraktur'],
-      ['DoubleStruck', 'Double Struck'],
-      ['SansSerif', 'Sans Serif'],
-      ['SansSerifItalic', 'Sans Serif Italic'],
-      ['SansSerifBold', 'Sans Serif Bold'],
-      ['SansSerifBoldItalic', 'Sans Serif Bold Italic'],
-      ['Monospace', 'Monospace'],
-      ['Circled', 'Circled'],
-      ['Parenthesized', 'Parenthesized'],
-      ['FullWidth', 'Full Width'],
-      ['SmallCaps', 'Small Caps'],
-      ['Superscript', 'Superscript'],
-      ['Subscript', 'Subscript'],
-      ['Inverted', 'Inverted'],
-      ['Squared', 'Squared'],
-      ['RegionalIndicator', 'Regional Indicator'],
-      ['Strikethrough', 'Strikethrough'],
-      ['Underline', 'Underline'],
-      ['Slash', 'Slash']
+      ['Bold', 'Bold', 'Classic'],
+      ['Italic', 'Italic', 'Classic'],
+      ['BoldItalic', 'Bold Italic', 'Classic'],
+      ['SansSerif', 'Sans Serif', 'Classic'],
+      ['SansSerifItalic', 'Sans Serif Italic', 'Classic'],
+      ['SansSerifBold', 'Sans Serif Bold', 'Classic'],
+      ['SansSerifBoldItalic', 'Sans Serif Bold Italic', 'Classic'],
+      ['Monospace', 'Monospace', 'Classic'],
+
+      ['Script', 'Script', 'Mathematical & Script'],
+      ['BoldScript', 'Bold Script', 'Mathematical & Script'],
+      ['Fraktur', 'Fraktur', 'Mathematical & Script'],
+      ['BoldFraktur', 'Bold Fraktur', 'Mathematical & Script'],
+      ['DoubleStruck', 'Double Struck', 'Mathematical & Script'],
+
+      ['Circled', 'Circled', 'Enclosed'],
+      ['Parenthesized', 'Parenthesized', 'Enclosed'],
+      ['Squared', 'Squared', 'Enclosed'],
+      ['RegionalIndicator', 'Regional Indicator', 'Enclosed'],
+
+      ['FullWidth', 'Full Width', 'Decorative'],
+      ['SmallCaps', 'Small Caps', 'Decorative'],
+      ['Superscript', 'Superscript', 'Decorative'],
+      ['Subscript', 'Subscript', 'Decorative'],
+
+      ['Inverted', 'Inverted', 'Effects'],
+      ['Strikethrough', 'Strikethrough', 'Effects'],
+      ['Underline', 'Underline', 'Effects'],
+      ['Slash', 'Slash', 'Effects']
     ];
+
+    const popularStyles = ['Bold', 'Italic', 'Script', 'Monospace', 'DoubleStruck', 'SmallCaps', 'Circled', 'Fraktur', 'Inverted'];
 
     const offsets = {
       Bold: [0x1D400 - 65, 0x1D41A - 97, 0x1D7CE - 48],
@@ -60,8 +74,6 @@ if (typeof window.jQuery === 'undefined') {
       'ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ⓪①②③④⑤⑥⑦⑧⑨'
     );
 
-    // These mathematical alphabets have gaps reserved by Unicode, so an offset
-    // calculation can produce unassigned code points (rendered as boxes).
     const script = map(
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
       '𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹ℯ𝒻𝒼𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏'
@@ -115,7 +127,6 @@ if (typeof window.jQuery === 'undefined') {
     const fullWidth = (c) =>
       c === ' ' ? '　' : c >= '!' && c <= '~' ? String.fromCodePoint(c.codePointAt(0) + 0xFEE0) : c;
 
-
     function convertCharacter(c, style) {
       if (style === 'FullWidth') return fullWidth(c);
       if (style === 'Strikethrough') return c + '\u0336';
@@ -148,118 +159,569 @@ if (typeof window.jQuery === 'undefined') {
       return c;
     }
 
-    styles.forEach(([value, label]) => {
-      const previewText = [...label].map(c => convertCharacter(c, value)).join('');
-      $('#fontStyle').append($('<option>', { value, text: previewText }));
-    });
-
-    function updateCharCount() {
-      const inputLen = $('#inputText').val().length;
-      const outputLen = $('#outputText').val().length;
-      $('#inputCharCount').text(inputLen + (inputLen === 1 ? ' char' : ' chars'));
-      $('#outputCharCount').text(outputLen + (outputLen === 1 ? ' char' : ' chars'));
+    // ─── Core Transform Helpers ─────────────────────────────────────────────
+    function transformString(text, style) {
+      return [...text].map(c => convertCharacter(c, style)).join('');
     }
 
+    function formatTextForStyle(input, style, mode, delimiter) {
+      if (!input) return '';
+      if (mode === 'all') {
+        return transformString(input, style);
+      }
+      // Delimited mode:
+      if (!delimiter) return input;
+      return input
+        .split(delimiter)
+        .map((part, index) => (index % 2 ? transformString(part, style) : part))
+        .join('');
+    }
+
+    // ─── Application State ──────────────────────────────────────────────────
+    let currentMode = 'all'; // 'all' | 'delimited'
+    let lastClearedText = '';
+    let currentCategoryFilter = 'all';
+    let currentSearchQuery = '';
+
+    // ─── Setup UI Controls & Dropdowns ──────────────────────────────────────
+    const categories = [...new Set(styles.map(s => s[2]))];
+    categories.forEach(cat => {
+      const $optgroup = $('<optgroup>', { label: cat });
+      styles.filter(s => s[2] === cat).forEach(([val, label]) => {
+        const preview = transformString(label, val);
+        $optgroup.append($('<option>', { value: val, text: `${label} (${preview})` }));
+      });
+      $('#fontStyle').append($optgroup);
+    });
+
+    // Populate Popular Styles Quick Pills
+    function renderPopularStyles() {
+      const $list = $('#popularStylesList').empty();
+      popularStyles.forEach(val => {
+        const item = styles.find(s => s[0] === val);
+        if (!item) return;
+        const [value, label] = item;
+        const preview = transformString(label, value);
+        const isActive = $('#fontStyle').val() === value;
+        const $pill = $('<button>', {
+          type: 'button',
+          class: `quick-style-pill ${isActive ? 'active' : ''}`,
+          text: preview,
+          title: `Switch to ${label}`,
+          'data-style': value
+        });
+        $pill.on('click', function () {
+          $('#fontStyle').val(value).trigger('change');
+        });
+        $list.append($pill);
+      });
+    }
+
+    // ─── Character and Word Count Helpers ───────────────────────────────────
+    function getCounts(text) {
+      if (!text) return { chars: 0, words: 0 };
+      const chars = text.length;
+      const words = (text.trim().match(/\S+/g) || []).length;
+      return { chars, words };
+    }
+
+    function updateCounts() {
+      const inVal = $('#inputText').val();
+      const outVal = $('#outputText').val();
+      const inCounts = getCounts(inVal);
+      const outCounts = getCounts(outVal);
+
+      $('#inputCharCount').text(
+        `${inCounts.words} ${inCounts.words === 1 ? 'word' : 'words'} • ${inCounts.chars} ${inCounts.chars === 1 ? 'char' : 'chars'}`
+      );
+      $('#outputCharCount').text(
+        `${outCounts.words} ${outCounts.words === 1 ? 'word' : 'words'} • ${outCounts.chars} ${outCounts.chars === 1 ? 'char' : 'chars'}`
+      );
+    }
+
+    // ─── Main Formatting Function ───────────────────────────────────────────
     function formatText() {
       const input = $('#inputText').val();
       const delimiter = $('#delimiter').val();
       const style = $('#fontStyle').val();
 
-      if (!input || !delimiter) {
-        $('#outputText').val(input);
-        updateCharCount();
+      const output = formatTextForStyle(input, style, currentMode, delimiter);
+      $('#outputText').val(output);
+      updateCounts();
+      updateGalleryPreviews();
+      updatePopularStylesActive();
+    }
+
+    function updatePopularStylesActive() {
+      const activeStyle = $('#fontStyle').val();
+      $('.quick-style-pill').each(function () {
+        const pillStyle = $(this).attr('data-style');
+        $(this).toggleClass('active', pillStyle === activeStyle);
+      });
+    }
+
+    // ─── All Styles Preview Gallery ─────────────────────────────────────────
+    function buildGalleryGrid() {
+      const $grid = $('#styleCardsGrid').empty();
+      const query = currentSearchQuery.toLowerCase().trim();
+
+      const filteredStyles = styles.filter(([val, label, cat]) => {
+        const matchesCategory = currentCategoryFilter === 'all' || cat === currentCategoryFilter;
+        const matchesSearch = !query || label.toLowerCase().includes(query) || cat.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      });
+
+      $('#stylesCountBadge').text(`${filteredStyles.length} ${filteredStyles.length === 1 ? 'style' : 'styles'}`);
+
+      if (filteredStyles.length === 0) {
+        $grid.append(
+          $('<div>', {
+            class: 'gallery-empty-state',
+            html: '<p style="grid-column: 1/-1; text-align: center; color: var(--text-subtle); padding: 32px 0;">No matching styles found. Try searching for "script", "bold", or "caps".</p>'
+          })
+        );
         return;
       }
 
-      // Delimiters mark content to format; they are not part of the final output.
-      $('#outputText').val(
-        input
-          .split(delimiter)
-          .map((part, index) =>
-            index % 2 ? [...part].map(c => convertCharacter(c, style)).join('') : part
-          )
-          .join('')
-      );
-      updateCharCount();
-    }
-
-    function wrapSelectionInBold() {
-      const input = $('#inputText')[0];
-      const start = input.selectionStart;
-      const end = input.selectionEnd;
+      const input = $('#inputText').val();
       const delimiter = $('#delimiter').val();
+      const sampleText = input || 'Sample Text 123';
 
-      if (start === end || !delimiter) return;
+      filteredStyles.forEach(([val, label, cat]) => {
+        const formatted = formatTextForStyle(sampleText, val, currentMode, delimiter);
 
-      const selected = input.value.slice(start, end);
-      input.setRangeText(delimiter + selected + delimiter, start, end, 'select');
-      input.focus();
-      formatText();
+        const $card = $('<div>', {
+          class: 'style-card',
+          'data-style': val,
+          role: 'button',
+          tabindex: '0',
+          'aria-label': `${label} preview: ${formatted}`
+        });
+
+        const $cardHeader = $('<div>', { class: 'style-card-header' }).append(
+          $('<span>', { class: 'style-card-name', text: label }),
+          $('<span>', { class: 'style-category-tag', text: cat })
+        );
+
+        const $cardPreview = $('<div>', {
+          class: 'style-card-preview',
+          text: formatted
+        });
+
+        const $cardActions = $('<div>', { class: 'style-card-actions' });
+
+        const $applyBtn = $('<button>', {
+          type: 'button',
+          class: 'card-apply-btn',
+          text: 'Use in Output',
+          title: `Apply ${label} to main output`
+        }).on('click', function (e) {
+          e.stopPropagation();
+          $('#fontStyle').val(val).trigger('change');
+          showToast(`Applied style: ${label}`);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        const $copyBtn = $('<button>', {
+          type: 'button',
+          class: 'card-copy-btn',
+          html: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg> <span>Copy</span>',
+          title: `Copy ${label} text`
+        }).on('click', function (e) {
+          e.stopPropagation();
+          const textToCopy = formatTextForStyle($('#inputText').val() || sampleText, val, currentMode, delimiter);
+          copyTextToClipboard(textToCopy, $(this));
+        });
+
+        $cardActions.append($applyBtn, $copyBtn);
+        $card.append($cardHeader, $cardPreview, $cardActions);
+
+        // Clicking card selects style
+        $card.on('click', function () {
+          $('#fontStyle').val(val).trigger('change');
+        });
+
+        $grid.append($card);
+      });
     }
 
+    function updateGalleryPreviews() {
+      const input = $('#inputText').val();
+      const delimiter = $('#delimiter').val();
+      const sampleText = input || 'Sample Text 123';
+
+      $('.style-card').each(function () {
+        const val = $(this).attr('data-style');
+        const formatted = formatTextForStyle(sampleText, val, currentMode, delimiter);
+        $(this).find('.style-card-preview').text(formatted);
+      });
+    }
+
+    // ─── Clipboard & Feedback Actions ───────────────────────────────────────
     let toastTimer;
 
-    function showToast(message) {
-      $('#toast').text(message).addClass('visible');
+    function showToast(message, actionLabel, onAction) {
+      const $toast = $('#toast');
+      $('#toastMessage').text(message);
+      const $action = $('#toastAction');
+
+      if (actionLabel && onAction) {
+        $action.text(actionLabel).off('click').on('click', function () {
+          onAction();
+          $toast.removeClass('visible');
+        }).prop('hidden', false);
+      } else {
+        $action.prop('hidden', true);
+      }
+
+      $toast.addClass('visible');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => $('#toast').removeClass('visible'), 1500);
+      toastTimer = setTimeout(() => $toast.removeClass('visible'), actionLabel ? 3500 : 2000);
+    }
+
+    function copyTextToClipboard(text, $btn) {
+      if (!text) {
+        showToast('Nothing to copy');
+        return;
+      }
+
+      const markSuccess = () => {
+        if ($btn && $btn.length) {
+          const originalHtml = $btn.html();
+          $btn.addClass('copied').html('✓ Copied!');
+          setTimeout(() => {
+            $btn.removeClass('copied').html(originalHtml);
+          }, 1800);
+        }
+        showToast('Copied to clipboard');
+        if (navigator.vibrate) navigator.vibrate(35);
+      };
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(markSuccess).catch(() => {
+          fallbackCopy(text, markSuccess);
+        });
+      } else {
+        fallbackCopy(text, markSuccess);
+      }
+    }
+
+    function fallbackCopy(text, onSuccess) {
+      const temp = $('<textarea>').val(text).appendTo('body').select();
+      try {
+        document.execCommand('copy');
+        temp.remove();
+        if (onSuccess) onSuccess();
+      } catch (e) {
+        temp.remove();
+        showToast('Copy failed. Please copy manually.');
+      }
     }
 
     function copyOutput() {
       const text = $('#outputText').val();
-      if (!text) return;
-
-      navigator.clipboard
-        ?.writeText(text)
-        .then(() => showToast('Copied to clipboard'))
-        .catch(() => {
-          $('#outputText').trigger('focus').trigger('select');
-          showToast('Select output and copy');
-        });
+      copyTextToClipboard(text, $('#copyButton'));
     }
 
-    $('#inputText, #delimiter, #fontStyle').on('input change', formatText);
+    // ─── Input & Selection Actions ──────────────────────────────────────────
+    function wrapSelectionInDelimiter() {
+      const input = $('#inputText')[0];
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      const delimiter = $('#delimiter').val() || '**';
 
-    $('#inputText').on('keydown', function (event) {
-      if (event.ctrlKey && event.key.toLowerCase() === 'b') {
-        event.preventDefault();
-        wrapSelectionInBold();
+      // If in entire text mode, prompt or switch to delimited mode for convenience
+      if (currentMode === 'all') {
+        switchMode('delimited');
+      }
+
+      if (start === end) {
+        // No selection: insert delimiter markers and place cursor in between
+        input.setRangeText(delimiter + delimiter, start, end, 'end');
+        input.selectionStart = input.selectionEnd = start + delimiter.length;
+      } else {
+        const selected = input.value.slice(start, end);
+        input.setRangeText(delimiter + selected + delimiter, start, end, 'select');
+      }
+
+      input.focus();
+      formatText();
+      showToast(`Wrapped with ${delimiter}`);
+    }
+
+    async function pasteInput() {
+      try {
+        if (!navigator.clipboard?.readText) {
+          $('#inputText').focus();
+          showToast('Press Ctrl+V / ⌘+V to paste');
+          return;
+        }
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          const input = $('#inputText')[0];
+          const start = input.selectionStart;
+          const end = input.selectionEnd;
+          input.setRangeText(text, start, end, 'end');
+          formatText();
+          showToast('Pasted from clipboard');
+        } else {
+          showToast('Clipboard is empty');
+        }
+      } catch (err) {
+        $('#inputText').focus();
+        showToast('Clipboard access denied. Use Ctrl+V / ⌘+V');
+      }
+    }
+
+    function clearInput() {
+      const current = $('#inputText').val();
+      if (!current) return;
+      lastClearedText = current;
+      $('#inputText').val('');
+      formatText();
+      showToast('Text cleared', 'Undo', () => {
+        $('#inputText').val(lastClearedText);
+        formatText();
+        showToast('Text restored');
+      });
+    }
+
+    function shareOutput() {
+      const text = $('#outputText').val();
+      if (!text) {
+        showToast('Nothing to share');
+        return;
+      }
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'Unicode Text',
+          text: text
+        }).catch(() => {});
+      } else {
+        copyOutput();
+        showToast('Sharing not supported on this browser. Copied to clipboard!');
+      }
+    }
+
+    function downloadOutput() {
+      const text = $('#outputText').val();
+      if (!text) {
+        showToast('Nothing to download');
+        return;
+      }
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'unicode-text.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Downloaded unicode-text.txt');
+    }
+
+    function loadExample() {
+      if (currentMode === 'all') {
+        $('#inputText').val('Transform any text into bold, script, and stylish Unicode letters with instant preview!');
+      } else {
+        const delim = $('#delimiter').val() || '**';
+        $('#inputText').val(
+          `Welcome to ${delim}Unicode Text Formatter${delim}! Make ${delim}important words${delim} stand out in messages and posts.`
+        );
+      }
+      formatText();
+      showToast('Loaded example text');
+    }
+
+    // ─── Mode Switching ─────────────────────────────────────────────────────
+    function switchMode(mode) {
+      currentMode = mode;
+      $('.segment-btn').removeClass('active').attr('aria-checked', 'false');
+      if (mode === 'all') {
+        $('#modeAll').addClass('active').attr('aria-checked', 'true');
+        $('#delimiterSettings').prop('hidden', true);
+      } else {
+        $('#modeDelimited').addClass('active').attr('aria-checked', 'true');
+        $('#delimiterSettings').prop('hidden', false);
+      }
+      formatText();
+      buildGalleryGrid();
+    }
+
+    // ─── Theme Management ───────────────────────────────────────────────────
+    const THEMES = ['auto', 'light', 'dark'];
+    let savedTheme = localStorage.getItem('unicode_formatter_theme') || 'auto';
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('unicode_formatter_theme', theme);
+
+      const icons = { auto: '🌓', light: '☀️', dark: '🌙' };
+      const labels = { auto: 'Theme (Auto)', light: 'Theme (Light)', dark: 'Theme (Dark)' };
+
+      $('#themeIcon').text(icons[theme] || '🌓');
+      $('#themeLabel').text(labels[theme] || 'Theme');
+
+      const metaThemeColor = document.getElementById('themeColorMeta');
+      if (metaThemeColor) {
+        if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          metaThemeColor.setAttribute('content', '#0b0f19');
+        } else {
+          metaThemeColor.setAttribute('content', '#6366f1');
+        }
+      }
+    }
+
+    function cycleTheme() {
+      const currentIndex = THEMES.indexOf(savedTheme);
+      const nextIndex = (currentIndex + 1) % THEMES.length;
+      savedTheme = THEMES[nextIndex];
+      applyTheme(savedTheme);
+      showToast(`Switched theme to ${savedTheme}`);
+    }
+
+    // ─── Help Modal Dialog ──────────────────────────────────────────────────
+    const helpModal = document.getElementById('helpModal');
+
+    function openHelp() {
+      if (helpModal) {
+        if (typeof helpModal.showModal === 'function') {
+          helpModal.showModal();
+        } else {
+          helpModal.setAttribute('open', '');
+        }
+      }
+    }
+
+    function closeHelp() {
+      if (helpModal) {
+        if (typeof helpModal.close === 'function') {
+          helpModal.close();
+        } else {
+          helpModal.removeAttribute('open');
+        }
+      }
+    }
+
+    // ─── Event Bindings ─────────────────────────────────────────────────────
+    $('#inputText, #delimiter').on('input propertychange', formatText);
+    $('#fontStyle').on('change', formatText);
+
+    // Segmented Mode Buttons
+    $('#modeAll').on('click', () => switchMode('all'));
+    $('#modeDelimited').on('click', () => switchMode('delimited'));
+
+    // Delimiter presets
+    $('.preset-chip').on('click', function () {
+      $('.preset-chip').removeClass('active');
+      $(this).addClass('active');
+      const val = $(this).attr('data-delim');
+      $('#delimiter').val(val);
+      $('#currentDelimPreview').text(val);
+      formatText();
+      showToast(`Marker set to ${val}`);
+    });
+
+    $('#delimiter').on('input', function () {
+      const val = $(this).val();
+      $('#currentDelimPreview').text(val || '(empty)');
+      $('.preset-chip').removeClass('active');
+      $(`.preset-chip[data-delim="${val}"]`).addClass('active');
+    });
+
+    // Action Toolbar Buttons
+    $('#boldButton').on('click', wrapSelectionInDelimiter);
+    $('#pasteButton').on('click', pasteInput);
+    $('#clearButton').on('click', clearInput);
+    $('#copyButton').on('click', copyOutput);
+    $('#shareButton').on('click', shareOutput);
+    $('#downloadButton').on('click', downloadOutput);
+    $('#loadExampleButton').on('click', loadExample);
+
+    // Gallery Category Filter Tabs
+    $('.cat-pill').on('click', function () {
+      $('.cat-pill').removeClass('active').attr('aria-selected', 'false');
+      $(this).addClass('active').attr('aria-selected', 'true');
+      currentCategoryFilter = $(this).attr('data-cat');
+      buildGalleryGrid();
+    });
+
+    // Gallery Search Box
+    $('#styleSearch').on('input', function () {
+      currentSearchQuery = $(this).val();
+      buildGalleryGrid();
+    });
+
+    // Theme and Help
+    $('#themeButton').on('click', cycleTheme);
+    $('#helpButton').on('click', openHelp);
+    $('#closeHelpModal').on('click', closeHelp);
+
+    if (helpModal) {
+      helpModal.addEventListener('click', (e) => {
+        const rect = helpModal.getBoundingClientRect();
+        const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+                            rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
+        if (!isInDialog) closeHelp();
+      });
+    }
+
+    // ─── Keyboard Accessibility & Shortcuts ────────────────────────────────
+    $(document).on('keydown', function (e) {
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+
+      // Ctrl/Cmd + B: Wrap selection
+      if (isCtrlOrCmd && e.key.toLowerCase() === 'b') {
+        if ($('#inputText').is(':focus')) {
+          e.preventDefault();
+          wrapSelectionInDelimiter();
+        }
+      }
+
+      // Ctrl/Cmd + Enter: Copy formatted output
+      if (isCtrlOrCmd && e.key === 'Enter') {
+        e.preventDefault();
+        copyOutput();
+      }
+
+      // Ctrl/Cmd + Shift + X: Clear input
+      if (isCtrlOrCmd && e.shiftKey && e.key.toLowerCase() === 'x') {
+        e.preventDefault();
+        clearInput();
+      }
+
+      // Ctrl + / or ?: Help
+      if ((isCtrlOrCmd && e.key === '/') || (e.key === '?' && !$('input, textarea').is(':focus'))) {
+        e.preventDefault();
+        openHelp();
+      }
+
+      // Escape: Close modal
+      if (e.key === 'Escape' && helpModal?.open) {
+        closeHelp();
       }
     });
 
-    // On touch screens, a click can move focus before it reads textarea.selectionStart.
-    // Pointer-down happens early enough to preserve the selected range.
-    let wrappedByPointer = false;
+    // ─── Network Status Listener (Offline awareness) ────────────────────────
+    window.addEventListener('online', () => showToast('Back online'));
+    window.addEventListener('offline', () => showToast('Offline mode active. All formatting works 100% offline!'));
 
-    $('#boldButton')
-      .on('pointerdown', function (event) {
-        event.preventDefault();
-        wrappedByPointer = true;
-        wrapSelectionInBold();
-      })
-      .on('click', function () {
-        // Keyboard activation has no preceding pointer event.
-        if (wrappedByPointer) {
-          wrappedByPointer = false;
-          return;
-        }
-        wrapSelectionInBold();
-      });
-
-    $('#copyButton').on('click', copyOutput);
-    $('#outputText').on('focus', copyOutput);
-
+    // ─── Initialize ─────────────────────────────────────────────────────────
+    applyTheme(savedTheme);
+    renderPopularStyles();
+    buildGalleryGrid();
     formatText();
   });
 }
 
-/* ─── PWA & Service Worker Registration ───────────────────────────────────── */
+// ─── PWA & Service Worker Registration ─────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('./sw.js')
       .then((registration) => {
-        // Automatically check for SW updates
         registration.addEventListener('updatefound', () => {
           const installingWorker = registration.installing;
           if (installingWorker) {
@@ -282,11 +744,8 @@ let deferredPrompt = null;
 const installButton = document.getElementById('installButton');
 
 window.addEventListener('beforeinstallprompt', (event) => {
-  // Prevent immediate browser mini-infobar
   event.preventDefault();
   deferredPrompt = event;
-
-  // Reveal the custom install button in the UI
   if (installButton) {
     installButton.hidden = false;
   }
@@ -312,9 +771,9 @@ window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
   const toast = document.getElementById('toast');
   if (toast) {
-    toast.textContent = 'App installed successfully!';
+    const toastMsg = document.getElementById('toastMessage');
+    if (toastMsg) toastMsg.textContent = 'App installed successfully!';
     toast.classList.add('visible');
-    setTimeout(() => toast.classList.remove('visible'), 2000);
+    setTimeout(() => toast.classList.remove('visible'), 2500);
   }
 });
-
