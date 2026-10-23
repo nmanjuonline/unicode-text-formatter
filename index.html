@@ -72,61 +72,12 @@
       </div>
     </header>
 
-    <!-- Hero Header -->
+    <!-- Clean Hero Header -->
     <section class="hero">
       <h1 class="hero-title">Text Formatter</h1>
       <p class="hero-subtitle">
-        Transform your text into bold, script, monospace, and 20+ Unicode styles ready to copy & paste anywhere.
+        Type or paste to format text into stylish Unicode. Surround words with <code class="inline-code">**markers**</code> to format only those words, or type freely to format everything.
       </p>
-
-      <!-- Formatting Mode Selector -->
-      <div class="mode-selector-container">
-        <div class="segmented-control" role="radiogroup" aria-label="Formatting mode">
-          <button type="button" role="radio" aria-checked="false" id="modeDelimited" class="segment-btn" data-mode="delimited">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="6" cy="6" r="3"></circle>
-              <circle cx="6" cy="18" r="3"></circle>
-              <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-              <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-              <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
-            </svg>
-            <span>Marked Text (<code class="inline-code">**text**</code>)</span>
-          </button>
-          <button type="button" role="radio" aria-checked="true" id="modeAll" class="segment-btn active" data-mode="all">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
-            <span>Format Entire Text</span>
-          </button>
-        </div>
-
-        <button type="button" id="loadExampleButton" class="example-btn" title="Load sample text to see formatting in action">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
-          </svg>
-          <span>Try Example</span>
-        </button>
-      </div>
-
-      <!-- Delimiter Settings Bar (Conditional based on mode) -->
-      <div id="delimiterSettings" class="delimiter-settings" hidden>
-        <div class="delimiter-inline">
-          <label for="delimiter" class="delimiter-label">Marker:</label>
-          <input id="delimiter" class="header-input delimiter-input" type="text" value="**" spellcheck="false"
-            aria-label="Delimiter marker" title="Marker used before and after text to format (e.g. **text**)">
-          <div class="delimiter-presets" aria-label="Quick marker presets">
-            <span class="preset-label">Presets:</span>
-            <button type="button" class="preset-chip active" data-delim="**">**bold**</button>
-            <button type="button" class="preset-chip" data-delim="*">*italic*</button>
-            <button type="button" class="preset-chip" data-delim="_">_text_</button>
-            <button type="button" class="preset-chip" data-delim="~">~tilde~</button>
-            <button type="button" class="preset-chip" data-delim="[[">[[brackets]]</button>
-          </div>
-        </div>
-        <p class="delimiter-tip" id="delimiterHint">
-          Surround sections with <strong id="currentDelimPreview">**</strong> to format only those words.
-        </p>
-      </div>
     </section>
 
     <!-- Main Dual Editor Workspace -->
@@ -139,7 +90,12 @@
           </div>
 
           <div class="input-actions" role="toolbar" aria-label="Input actions">
-            <button id="boldButton" class="action-btn" type="button" title="Wrap selection in delimiter (Ctrl+B / ⌘+B)" aria-label="Wrap selection in delimiter">
+            <div class="marker-control" title="Marker used to format specific words (e.g. **word**)">
+              <label for="delimiter" class="marker-label">Marker:</label>
+              <input id="delimiter" class="header-input delimiter-input" type="text" value="**" spellcheck="false"
+                aria-label="Delimiter marker">
+            </div>
+            <button id="boldButton" class="action-btn" type="button" title="Wrap selection in marker (Ctrl+B / ⌘+B)" aria-label="Wrap selection in marker">
               <span class="btn-bold-icon" aria-hidden="true">B</span>
               <span class="btn-text">Wrap</span>
             </button>
@@ -161,10 +117,11 @@
         </div>
 
         <div class="textarea-wrapper">
-          <textarea id="inputText" placeholder="Type or paste text here (or click 'Try Example' above)…" spellcheck="true" aria-label="Input text to format"></textarea>
+          <textarea id="inputText" placeholder="Type or paste text here (e.g. Hello **world**)…" spellcheck="true" aria-label="Input text to format"></textarea>
         </div>
 
         <div class="panel-footer">
+          <button id="loadExampleButton" class="text-link-btn" type="button" title="Load sample text">✨ Try Example</button>
           <span class="counts-badge" id="inputCharCount" aria-live="polite">0 words • 0 chars</span>
         </div>
       </div>
@@ -304,10 +261,10 @@
           </div>
         </div>
 
-        <h4>Formatting Modes</h4>
+        <h4>How Formatting Works</h4>
         <ul class="help-list">
-          <li><strong>Format Entire Text:</strong> Converts all typed or pasted characters immediately. Great for social media posts, bios, and headlines.</li>
-          <li><strong>Marked Text:</strong> Only text wrapped in the chosen delimiter (e.g. <code>**bold**</code>) is converted. Everything outside delimiters remains normal text.</li>
+          <li><strong>Format Everything:</strong> Simply type or paste your text. Everything converts to the selected Unicode style automatically.</li>
+          <li><strong>Format Specific Words:</strong> Wrap words with markers like <code>**bold**</code>. Only marked sections will be formatted; the rest stays as plain text.</li>
         </ul>
 
         <h4>Offline &amp; Privacy</h4>
